@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Complete Gaming System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      background: radial-gradient(circle, rgba(20,8,30,0.95) 0%, rgba(5,2,8,0.98) 100%);
+      color: #fff;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 100vw;
+      min-height: 100vh;
+      box-sizing: border-box;
+      flex-direction: column;
+    }
+
+    .active { display: flex; }
+
+    /* LOGIN SCREEN */
+    #login-screen {
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .login-container {
+      background: rgba(30, 8, 12, 0.95);
+      border: 3px solid #ff5252;
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .login-header {
+      text-align: center;
+      color: #ffab00;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .input-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .input-group label {
+      color: #76ff03;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .input-group input {
+      flex: 1;
+      width: 100%;
+      padding: 8px;
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 4px;
+      color: #000;
+      font-weight: bold;
+      outline: none;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 2px solid;
+      text-align: center;
+    }
+
+    .btn-enter { background: #ff6d00; color: #fff; border-color: #ffd600; width: 100%; }
+    .btn-close { background: #37474f; color: #80d8ff; border-color: #80d8ff; }
+
+    /* HEADER */
+    .top-bar {
+      width: 100%;
+      background: linear-gradient(90deg, #2a0b12, #0d0005);
+      border-bottom: 2px solid #ff6f00;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      font-weight: bold;
+      box-sizing: border-box;
+    }
+
+    .top-bar .info {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .top-bar .info span { color: #ffd54f; font-weight: 800; }
+
+    /* USER DASHBOARD */
+    .main-body {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .left-panel, .right-panel {
+      width: 100%;
+      background: rgba(25, 8, 12, 0.88);
+      border: 2px solid #8d6e63;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* PURE CSS GLOWING LOGO (NO IMAGE REQUIRED) */
+    .game-logo {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      border: 3px solid #ffab00;
+      background: linear-gradient(135deg, #ff6d00, #3e2723);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffff00;
+      font-weight: 900;
+      text-align: center;
+      margin: 0 auto;
+      font-size: 24px;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(255, 171, 0, 0.6);
+      text-shadow: 0 0 8px #000;
+    }
+
+    .center-content {
+      width: 100%;
+      background: rgba(15, 4, 6, 0.9);
+      border: 2px solid #5d4037;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .results-display-card {
+      background: #25080c;
+      border: 2px solid #ffab00;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .res-box {
+      background: #3e1218;
+      border: 1px solid #ff6f00;
+      padding: 6px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .res-box .title { font-size: 11px; color: #76ff03; font-weight: bold; }
+    .res-box .val { font-size: 18px; color: #ffd54f; font-weight: 900; margin-top: 2px; }
+
+    .game-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .game-list li {
+      background: #3e2723;
+      padding: 9px;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid #ff8f00;
+      color: #fff;
+    }
+
+    /* GAME PLAY SCREEN */
+    #game-page {
+      padding: 10px;
+      background: rgba(10, 2, 4, 0.95);
+    }
+
+    .harup-container {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .harup-box-wrapper {
+      flex: 1;
+      min-width: 140px;
+      background: rgba(40, 10, 10, 0.8);
+      border: 1px solid #ff6f00;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    .grid-10 {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+      margin-top: 5px;
+    }
+
+    .bet-box {
+      background: #3e2723;
+      border: 1px solid #ff8f00;
+      border-radius: 4px;
+      height: 38px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 11px;
+    }
+
+    .bet-box .pts-count {
+      font-size: 8px;
+      color: #76ff03;
+      font-weight: 900;
+    }
+
+    .tokens-bar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 12px 0;
+      background: #1b0000;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ff6f00;
+    }
+
+    .token {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      cursor: pointer;
+      border: 2px dashed #fff;
+      font-size: 12px;
+    }
+
+    .token-10 { background: #29b6f6; color: #000; }
+    .token-50 { background: #ab47bc; color: #fff; }
+    .token-100 { background: #ffa726; color: #000; }
+    .token-500 { background: #66bb6a; color: #000; }
+
+    .token.selected {
+      border: 3px solid #76ff03;
+      transform: scale(1.12);
+    }
+
+    .controls-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    /* ADMIN CONTAINER */
+    .admin-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .panel-box {
+      background: #1d0709;
+      border: 1px solid #ff6f00;
+      border-radius: 6px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .panel-box h3 {
+      color: #76ff03;
+      font-size: 12px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #ff6f00;
+      padding-bottom: 4px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      color: #ffd54f;
+      font-weight: bold;
+    }
+
+    .form-group input, .form-group select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ffab00;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      outline: none;
+      width: 100%;
+    }
+
+    .admin-6-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .adm-card {
+      padding: 10px 6px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      border: 2px solid #ffab00;
+      background: #28080c;
+    }
+
+    .adm-card .g-title { font-size: 11px; color: #76ff03; text-transform: uppercase; }
+    .adm-card .g-res { font-size: 20px; margin-top: 4px; font-weight: 900; color: #ffff00; }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    .data-table th, .data-table td {
+      border: 1px solid #ff6f00;
+      padding: 6px 4px;
+      text-align: center;
+    }
+
+    .data-table th { background: #3e2723; color: #ffd54f; }
+
+    .admin-6-games-filter {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .game-filter-btn {
+      background: #3e1218;
+      border: 1px solid #ff6f00;
+      color: #ffd54f;
+      padding: 6px 2px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .game-filter-btn.active {
+      background: #ff6d00;
+      color: #fff;
+      border-color: #ffd600;
+    }
+
+    .bets-aggregate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 6px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .agg-card {
+      background: #3e1218;
+      border: 1px solid #ff8f00;
+      padding: 4px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.88);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: #20080c;
+      border: 2px solid #ff6f00;
+      border-radius: 8px;
+      width: 92%;
+      max-width: 500px;
+      max-height: 85vh;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .round-user-btn {
+      background: linear-gradient(135deg, #ff6d00, #ffab00);
+      color: #000;
+      border: 2px solid #fff;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,171,0,0.6);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #custom-toast {
+      visibility: hidden;
+      min-width: 220px;
+      background-color: #00c853;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 10px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      font-weight: bold;
+      font-size: 12px;
+      border: 2px solid #76ff03;
+    }
+
+    #custom-toast.show {
+      visibility: visible;
+      animation: fadein 0.3s, fadeout 0.3s 2.2s;
+    }
+
+    @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 20px; opacity: 1; } }
+    @keyframes fadeout { from { bottom: 20px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <div id="custom-toast">Bet Confirmed!</div>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-screen" class="screen active">
+    <form class="login-container" onsubmit="event.preventDefault(); handleSystemLogin();">
+      <div class="login-header">THE KK GAMING</div>
+      <div id="login-msg" style="color:#ffab00; font-size:11px; text-align:center;">Please Login</div>
+      
+      <div class="input-group">
+        <label>ID</label>
+        <input type="text" id="username" placeholder="User / Admin ID">
+      </div>
+
+      <div class="input-group">
+        <label>PASS</label>
+        <input type="password" id="password" placeholder="Password">
+      </div>
+
+      <button type="submit" class="btn btn-enter">ENTER</button>
+    </form>
+  </div>
+
+  <!-- 2. USER DASHBOARD -->
+  <div id="user-dashboard-screen" class="screen">
+    <div class="top-bar">
+      <div class="info">
+        <div>ID: <span id="logged-user-id">GK</span></div>
+        <div>POINTS: <span id="logged-points">0</span></div>
+      </div>
+      <button class="btn btn-close" onclick="signOutSystem()">SIGN OUT</button>
+    </div>
+
+    <div class="main-body">
+      <div class="left-panel">
+        <!-- NO IMAGE ERROR - PURE CSS LOGO -->
+        <div class="game-logo">KK</div>
+        <div style="text-align:center; color:#76ff03; font-weight:bold; font-size:12px;">WELCOME USER</div>
+
+        <!-- TRANSFER POINT BOX -->
+        <div style="width: 100%; background: #200505; border: 1px solid #ff6f00; padding: 8px; border-radius: 6px; text-align: center;">
+          <div style="color: #76ff03; font-weight: bold; font-size: 11px;">TRANSFER POINT TO ADMIN</div>
+          <input type="number" id="user-transfer-pts-input" placeholder="Points" style="width: 100%; padding: 5px; border-radius: 4px; border: 1px solid #ffab00; background: #fff; color: #000; font-weight: bold; font-size: 12px; outline: none; margin-top:4px;">
+          <button class="btn" style="background: #ff6d00; color: #fff; border-color: #ffd600; width: 100%; margin-top: 5px; padding: 5px; font-size: 11px;" onclick="transferPointsToAdmin()">SEND TO ADMIN</button>
+        </div>
+
+        <!-- RECEIVE POINTS BOX -->
+        <div style="background:#102008; border: 1px solid #76ff03; padding: 8px; border-radius: 6px; text-align: center;">
+          <div style="color: #00e676; font-weight: bold; font-size: 11px;">RECEIVE POINTS</div>
+          <div id="pending-receive-container" style="margin-top: 4px; font-size: 11px; color: #ffd54f;">No pending points.</div>
+        </div>
+
+        <!-- POINT HISTORY BOX -->
+        <div style="background:#1a0f08; border: 1px solid #ffab00; padding: 8px; border-radius: 6px; text-align: center;">
+          <div style="color: #ffd54f; font-weight: bold; font-size: 11px; border-bottom: 1px solid #ffab00; padding-bottom: 3px;">POINT HISTORY</div>
+          <div id="point-history-container" style="margin-top: 4px; font-size: 10px; max-height: 100px; overflow-y: auto; text-align: left;">No history.</div>
+        </div>
+      </div>
+
+      <div class="center-content">
+        <div class="results-display-card">
+          <div style="color: #ffd54f; font-weight: bold; border-bottom: 1px solid #ffab00; padding-bottom: 4px; font-size:12px;">📢 LIVE DECLARED RESULTS</div>
+          <div class="results-grid" id="user-live-results"></div>
+        </div>
+
+        <!-- RESULT ANNOUNCEMENT AND STATUS -->
+        <div style="background: #1d0709; border: 2px solid #76ff03; border-radius: 8px; padding: 10px; text-align: center;" id="user-center-status-box">
+          <div style="color: #76ff03; font-weight: bold; font-size: 12px; border-bottom: 1px solid #76ff03; padding-bottom: 4px;">🏆 RESULT ANNOUNCEMENT</div>
+          <div id="user-status-text" style="font-size: 11px; color: #ffd54f; margin-top: 6px; font-weight: bold;">No recent result declared.</div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <h3 style="color:#00e676; text-align:center; border-bottom:1px solid #00e676; padding-bottom:4px; font-size:13px;">GAMES</h3>
+        <ul class="game-list">
+          <li onclick="openGame('Faridabad')">Faridabad</li>
+          <li onclick="openGame('Gaziyabad')">Gaziyabad</li>
+          <li onclick="openGame('Gali')">Gali</li>
+          <li onclick="openGame('Dishawar')">Dishawar</li>
+          <li onclick="openGame('Faridabad Old')">Faridabad Old</li>
+          <li onclick="openGame('Dishawar Old')">Dishawar Old</li>
+        </ul>
+        <button class="btn" style="background:#2a0808; color:#ffd54f; border:1px solid #ffab00; margin-top:10px;" onclick="openBetHistoryModal()">📊 BET HISTORY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. GAME PLAY SCREEN -->
+  <div id="game-page" class="screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; background:#2a0808; padding:8px 12px; border-radius:8px; border:1px solid #ff6f00;">
+      <h3 id="active-game-title" style="color: #ffd54f;">GAME NAME</h3>
+      <div style="color:#00e676; font-weight:bold; font-size:12px;">Pts: <span id="game-user-pts">0</span></div>
+      <button class="btn btn-close" onclick="closeGamePage()" style="padding:4px 8px; font-size:11px;">BACK</button>
+    </div>
+
+    <!-- HARUP BOXES -->
+    <div class="harup-container">
+      <div class="harup-box-wrapper">
+        <div style="color: #76ff03; font-weight: bold; font-size:10px;">A HARUP (0 - 9)</div>
+        <div class="grid-10" id="harup-a-grid"></div>
+      </div>
+      <div class="harup-box-wrapper">
+        <div style="color: #76ff03; font-weight: bold; font-size:10px;">B HARUP (0 - 9)</div>
+        <div class="grid-10" id="harup-b-grid"></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <div style="color: #76ff03; font-weight: bold; margin-bottom: 4px; font-size:11px;">00 TO 99 JODI NUMBERS</div>
+      <div class="grid-10" id="jodi-grid"></div>
+    </div>
+
+    <div class="tokens-bar">
+      <div class="token token-10 selected" onclick="selectToken(10, this)">10</div>
+      <div class="token token-50" onclick="selectToken(50, this)">50</div>
+      <div class="token token-100" onclick="selectToken(100, this)">100</div>
+      <div class="token token-500" onclick="selectToken(500, this)">500</div>
+    </div>
+
+    <div class="controls-bar">
+      <button class="btn" style="background:#00c853; color:#fff; border-color:#b9f6ca; flex:1;" onclick="handleBetOK()">BET OK</button>
+      <button class="btn" style="background:#d50000; color:#fff; border-color:#ff8a80; flex:1;" onclick="handleAllCancel()">ALL CANCEL</button>
+    </div>
+  </div>
+
+  <!-- 4. ADMIN DASHBOARD -->
+  <div id="admin-dashboard-screen" class="screen">
+    <div class="top-bar">
+      <div style="color:#ffd54f; font-size:13px;">ADMIN CONTROL PANEL</div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button class="round-user-btn" onclick="openAdminUserModal()">👤 USER MGMT</button>
+        <button class="btn btn-close" onclick="signOutSystem()" style="padding:4px 8px; font-size:10px;">SIGN OUT</button>
+      </div>
+    </div>
+
+    <div class="admin-container">
+      <div class="panel-box">
+        <h3>📢 LIVE DECLARED RESULTS (6 GAMES)</h3>
+        <div class="admin-6-cards-grid">
+          <div class="adm-card"><div class="g-title">FARIDABAD</div><div class="g-res" id="adm-card-fb">--</div></div>
+          <div class="adm-card"><div class="g-title">GAZIYABAD</div><div class="g-res" id="adm-card-gb">--</div></div>
+          <div class="adm-card"><div class="g-title">GALI</div><div class="g-res" id="adm-card-gl">--</div></div>
+          <div class="adm-card"><div class="g-title">DISHAWAR</div><div class="g-res" id="adm-card-ds">--</div></div>
+          <div class="adm-card"><div class="g-title">FARIDABAD OLD</div><div class="g-res" id="adm-card-fbo">--</div></div>
+          <div class="adm-card"><div class="g-title">DISHAWAR OLD</div><div class="g-res" id="adm-card-dso">--</div></div>
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <h3>🎲 DECLARE RESULT</h3>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <select id="adm-game-select" style="padding:6px; flex:1; font-weight:bold;" onchange="selectAdminGameFilter(this.value)">
+            <option value="Faridabad">Faridabad</option>
+            <option value="Gaziyabad">Gaziyabad</option>
+            <option value="Gali">Gali</option>
+            <option value="Dishawar">Dishawar</option>
+            <option value="Faridabad Old">Faridabad Old</option>
+            <option value="Dishawar Old">Dishawar Old</option>
+          </select>
+          <input type="text" id="adm-selected-result" placeholder="No." style="width:50px; padding:6px; text-align:center; font-weight:bold;">
+          <button class="btn" style="background:#d50000; color:#fff; padding:6px 10px;" onclick="adminDeclareResult()">DECLARE</button>
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <h3 id="adm-bets-header-title">📊 AGGREGATED LIVE BETS (FARIDABAD)</h3>
+        <div class="admin-6-games-filter">
+          <div class="game-filter-btn active" id="btn-g-Faridabad" onclick="selectAdminGameFilter('Faridabad')">Faridabad</div>
+          <div class="game-filter-btn" id="btn-g-Gaziyabad" onclick="selectAdminGameFilter('Gaziyabad')">Gaziyabad</div>
+          <div class="game-filter-btn" id="btn-g-Gali" onclick="selectAdminGameFilter('Gali')">Gali</div>
+          <div class="game-filter-btn" id="btn-g-Dishawar" onclick="selectAdminGameFilter('Dishawar')">Dishawar</div>
+          <div class="game-filter-btn" id="btn-g-Faridabad-Old" onclick="selectAdminGameFilter('Faridabad Old')">Fb Old</div>
+          <div class="game-filter-btn" id="btn-g-Dishawar-Old" onclick="selectAdminGameFilter('Dishawar Old')">Ds Old</div>
+        </div>
+        <div class="bets-aggregate-grid" id="admin-aggregate-bets-box"></div>
+      </div>
+
+      <div class="panel-box">
+        <h3>📥 PENDING USER REQUESTS</h3>
+        <div id="admin-pending-user-requests" style="max-height: 100px; overflow-y: auto;">No requests.</div>
+      </div>
+
+      <div class="panel-box">
+        <h3>📜 USER TRANSACTIONS HISTORY</h3>
+        <div id="admin-transactions-history-box" style="max-height: 100px; overflow-y: auto; font-size: 10px; color: #ffd54f;">No transactions yet.</div>
+      </div>
+
+      <div class="panel-box">
+        <h3>📋 CREATED USERS & BALANCE</h3>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Password</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP MODAL FOR ADMIN USER CREATE & TRANSFER -->
+  <div id="admin-user-mgmt-modal" class="modal">
+    <div class="modal-content">
+      <h3 style="color:#ffd54f; border-bottom:1px solid #ffd54f; padding-bottom:5px; text-align:center;">👤 USER MANAGEMENT</h3>
+      
+      <div style="margin-top:10px;" class="panel-box">
+        <h3 style="color:#76ff03;">➕ CREATE / EDIT USER ID</h3>
+        <div class="form-group">
+          <label>USER ID</label>
+          <input type="text" id="adm-user-id" placeholder="USER101">
+        </div>
+        <div class="form-group">
+          <label>PASSWORD</label>
+          <input type="text" id="adm-user-pass" placeholder="Password">
+        </div>
+        <button class="btn" style="background:#00c853; color:#fff; width:100%; border-color:#b9f6ca;" onclick="adminCreateUser()">SAVE USER</button>
+      </div>
+
+      <div style="margin-top:10px;" class="panel-box">
+        <h3 style="color:#ffab00;">💰 TRANSFER POINTS TO USER</h3>
+        <div class="form-group">
+          <label>SELECT USER</label>
+          <select id="adm-select-user"><option value="">-- Choose User --</option></select>
+        </div>
+        <div class="form-group">
+          <label>POINTS</label>
+          <input type="number" id="adm-transfer-pts" placeholder="Points">
+        </div>
+        <button class="btn" style="background:#ff6d00; color:#fff; width:100%; border-color:#ffd600;" onclick="adminTransferPoints()">SEND POINTS</button>
+      </div>
+
+      <button class="btn btn-close" style="margin-top: 15px; width:100%;" onclick="closeModal('admin-user-mgmt-modal')">CLOSE WINDOW</button>
+    </div>
+  </div>
+
+  <!-- MODAL FOR BET HISTORY -->
+  <div id="bet-history-modal" class="modal">
+    <div class="modal-content">
+      <h3 style="color: #ffd54f; border-bottom: 1px solid #ffd54f; padding-bottom: 5px;">MY BET HISTORY</h3>
+      <div id="bet-history-list" style="margin-top:10px; max-height:220px; overflow-y:auto;"></div>
+      <button class="btn btn-close" style="margin-top: 12px; width:100%;" onclick="closeModal('bet-history-modal')">CLOSE</button>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = "";
+    let userPoints = 0;
+    let selectedToken = 10;
+    let currentGameName = "";
+    let currentBets = {};
+    let selectedAdminGame = "Faridabad";
+    let audioCtx = null;
+
+    function playBeepSound() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.value = 850; gain.gain.value = 0.08;
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.07);
+      } catch (e) {}
+    }
+
+    function showToast(msg) {
+      let toast = document.getElementById("custom-toast");
+      toast.innerText = msg;
+      toast.className = "show";
+      setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2500);
+    }
+
+    function getUsersDB() {
+      let data = localStorage.getItem('app_users_db');
+      return data ? JSON.parse(data) : { "GK": { pass: "1234", points: 10000 } };
+    }
+
+    function saveUsersDB(db) { localStorage.setItem('app_users_db', JSON.stringify(db)); }
+    function getUserBetsDB() { let data = localStorage.getItem('app_user_bets_db'); return data ? JSON.parse(data) : {}; }
+    function saveUserBetsDB(bets) { localStorage.setItem('app_user_bets_db', JSON.stringify(bets)); }
+    function getPointHistoryDB() { let data = localStorage.getItem('app_point_history_db'); return data ? JSON.parse(data) : {}; }
+
+    function addPointHistory(uid, type, pts) {
+      let history = getPointHistoryDB();
+      if (!history[uid]) history[uid] = [];
+      history[uid].unshift({ type: type, points: pts, time: new Date().toLocaleTimeString() });
+      localStorage.setItem('app_point_history_db', JSON.stringify(history));
+    }
+
+    function addAdminTxLog(uid, type, pts) {
+      let logs = JSON.parse(localStorage.getItem('app_admin_tx_logs') || '[]');
+      logs.unshift({ user: uid, type: type, pts: pts, time: new Date().toLocaleTimeString() });
+      localStorage.setItem('app_admin_tx_logs', JSON.stringify(logs));
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initGrids();
+      renderLiveResults();
+    });
+
+    function handleSystemLogin() {
+      let idInput = document.getElementById('username').value.trim();
+      let passInput = document.getElementById('password').value.trim();
+
+      if (idInput.toUpperCase() === "ADMIN" && (passInput === "ksk030804" || passInput === "ksk0308")) {
+        renderAdminUI();
+        showScreen('admin-dashboard-screen');
+        return;
+      }
+
+      let db = getUsersDB();
+      if (db[idInput] && db[idInput].pass === passInput) {
+        currentUser = idInput;
+        userPoints = db[idInput].points || 0;
+        updateUserPointsUI();
+        checkPendingTransfers();
+        renderPointHistory();
+        checkUserResultStatus();
+        showScreen('user-dashboard-screen');
+      } else {
+        showToast("WRONG USER ID OR PASSWORD!");
+      }
+    }
+
+    function updateUserPointsUI() {
+      document.getElementById('logged-user-id').innerText = currentUser;
+      document.getElementById('logged-points').innerText = userPoints;
+      document.getElementById('game-user-pts').innerText = userPoints;
+    }
+
+    function signOutSystem() {
+      document.getElementById('username').value = "";
+      document.getElementById('password').value = "";
+      showScreen('login-screen');
+    }
+
+    function transferPointsToAdmin() {
+      let ptsInput = document.getElementById('user-transfer-pts-input');
+      let pts = parseInt(ptsInput.value);
+
+      if (!pts || pts <= 0) { showToast("Enter a valid points amount!"); return; }
+      if (pts > userPoints) { showToast("Insufficient Points balance!"); return; }
+
+      userPoints -= pts;
+      updateUserPointsUI();
+
+      let db = getUsersDB();
+      if (db[currentUser]) { db[currentUser].points = userPoints; saveUsersDB(db); }
+
+      let reqs = JSON.parse(localStorage.getItem('app_user_to_admin_reqs') || '[]');
+      reqs.unshift({ user: currentUser, points: pts, time: new Date().toLocaleTimeString() });
+      localStorage.setItem('app_user_to_admin_reqs', JSON.stringify(reqs));
+
+      addPointHistory(currentUser, "Sent to Admin", pts);
+      renderPointHistory();
+      showToast(`${pts} Points Sent To Admin!`);
+      ptsInput.value = "";
+    }
+
+    function checkPendingTransfers() {
+      let transfers = JSON.parse(localStorage.getItem('app_admin_transfers') || '{}');
+      let container = document.getElementById('pending-receive-container');
+
+      if (transfers[currentUser] && transfers[currentUser].length > 0) {
+        container.innerHTML = "";
+        transfers[currentUser].forEach((t, idx) => {
+          container.innerHTML += `
+            <div style="background:#1b3310; border:1px solid #00e676; padding:4px; margin-top:4px; border-radius:4px;">
+              <div>+${t.points} P</div>
+              <button class="btn" style="background:#00c853; color:#fff; padding:2px 6px; font-size:10px; margin-top:3px;" onclick="acceptPoints(${idx}, ${t.points})">RECEIVE</button>
+            </div>
+          `;
+        });
+      } else {
+        container.innerHTML = "No pending points.";
+      }
+    }
+
+    function acceptPoints(idx, pts) {
+      userPoints += pts;
+      updateUserPointsUI();
+
+      let db = getUsersDB();
+      if (db[currentUser]) { db[currentUser].points = userPoints; saveUsersDB(db); }
+
+      let transfers = JSON.parse(localStorage.getItem('app_admin_transfers') || '{}');
+      if (transfers[currentUser]) {
+        transfers[currentUser].splice(idx, 1);
+        localStorage.setItem('app_admin_transfers', JSON.stringify(transfers));
+      }
+
+      addPointHistory(currentUser, "Received from Admin", pts);
+      checkPendingTransfers();
+      renderPointHistory();
+      showToast(`${pts} Points Added To Balance!`);
+    }
+
+    function renderPointHistory() {
+      let history = getPointHistoryDB();
+      let userList = history[currentUser] || [];
+      let container = document.getElementById('point-history-container');
+
+      if (userList.length === 0) {
+        container.innerHTML = "No history.";
+      } else {
+        container.innerHTML = "";
+        userList.forEach(item => {
+          let color = item.type === "Received from Admin" ? "#76ff03" : "#ff1744";
+          let sign = item.type === "Received from Admin" ? "+" : "-";
+          container.innerHTML += `
+            <div style="border-bottom: 1px solid #3e2723; padding: 2px 0;">
+              <span style="color:${color}; font-weight:bold;">${sign}${item.points} P</span>
+              <span style="color:#aaa; font-size:9px;"> (${item.type})</span>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function initGrids() {
+      let ha = document.getElementById('harup-a-grid');
+      let hb = document.getElementById('harup-b-grid');
+      let jodi = document.getElementById('jodi-grid');
+
+      ha.innerHTML = ""; hb.innerHTML = ""; jodi.innerHTML = "";
+
+      for (let i = 0; i <= 9; i++) {
+        ha.appendChild(createBetBox(`A-${i}`, `A-${i}`));
+        hb.appendChild(createBetBox(`B-${i}`, `B-${i}`));
+      }
+
+      for (let i = 0; i <= 99; i++) {
+        let valStr = i < 10 ? '0' + i : '' + i;
+        jodi.appendChild(createBetBox(`J-${valStr}`, valStr));
+      }
+    }
+
+    function createBetBox(boxId, displayLabel) {
+      let div = document.createElement('div');
+      div.className = 'bet-box';
+      div.id = boxId;
+      div.innerHTML = `<div>${displayLabel}</div><div class="pts-count" id="cnt-${boxId}"></div>`;
+      div.onclick = () => onNumberClick(boxId);
+      return div;
+    }
+
+    function selectToken(val, el) {
+      playBeepSound();
+      selectedToken = val;
+      document.querySelectorAll('.token').forEach(t => t.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function onNumberClick(boxId) {
+      if (userPoints < selectedToken) { showToast("Insufficient Points!"); return; }
+      playBeepSound();
+      userPoints -= selectedToken;
+      updateUserPointsUI();
+
+      if (!currentBets[boxId]) currentBets[boxId] = 0;
+      currentBets[boxId] += selectedToken;
+      document.getElementById(`cnt-${boxId}`).innerText = `${currentBets[boxId]}P`;
+    }
+
+    function handleAllCancel() {
+      playBeepSound();
+      for (let boxId in currentBets) {
+        userPoints += currentBets[boxId];
+        document.getElementById(`cnt-${boxId}`).innerText = "";
+      }
+      currentBets = {};
+      updateUserPointsUI();
+    }
+
+    function handleBetOK() {
+      if (Object.keys(currentBets).length === 0) { showToast("Select numbers first!"); return; }
+      playBeepSound();
+
+      let db = getUsersDB();
+      if (db[currentUser]) { db[currentUser].points = userPoints; saveUsersDB(db); }
+
+      let allBets = getUserBetsDB();
+      if (!allBets[currentUser]) allBets[currentUser] = {};
+
+      let timeStr = new Date().toLocaleTimeString();
+
+      for (let boxId in currentBets) {
+        let cleanNum = boxId.replace("J-", "");
+        let key = `${currentGameName}_${cleanNum}`;
+
+        if (allBets[currentUser][key]) {
+          allBets[currentUser][key].pts += currentBets[boxId];
+          allBets[currentUser][key].time = timeStr;
+          allBets[currentUser][key].status = "pending";
+        } else {
+          allBets[currentUser][key] = {
+            time: timeStr, game: currentGameName, num: cleanNum, pts: currentBets[boxId], status: "pending"
+          };
+        }
+        document.getElementById(`cnt-${boxId}`).innerText = "";
+      }
+
+      saveUserBetsDB(allBets);
+      currentBets = {};
+      showToast("Bet Confirmed & Saved!");
+    }
+
+    function openGame(gName) {
+      currentGameName = gName;
+      document.getElementById('active-game-title').innerText = gName;
+      handleAllCancel();
+      showScreen('game-page');
+    }
+
+    function closeGamePage() { handleAllCancel(); showScreen('user-dashboard-screen'); }
+
+    function openBetHistoryModal() {
+      let container = document.getElementById('bet-history-list');
+      container.innerHTML = "";
+      let allBets = getUserBetsDB();
+      let userMap = allBets[currentUser] || {};
+      let keys = Object.keys(userMap);
+
+      if (keys.length === 0) {
+        container.innerText = "No bets placed yet.";
+      } else {
+        keys.forEach(k => {
+          let b = userMap[k];
+          let statusText = b.status === "win" ? "<span style='color:#76ff03;'>WIN 🎉</span>" : (b.status === "loss" ? "<span style='color:#ff1744;'>LOSS</span>" : "PENDING");
+          container.innerHTML += `<div style="padding:5px; border-bottom:1px solid #ff6f00; font-size:11px;">[${b.time}] <b>${b.game}</b> - No: <span style="color:#ffd54f;">${b.num}</span> -> Pts: <span style="color:#00e676;">${b.pts} P</span> (${statusText})</div>`;
+        });
+      }
+      document.getElementById('bet-history-modal').style.display = 'flex';
+    }
+
+    function openAdminUserModal() { document.getElementById('admin-user-mgmt-modal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function checkUserResultStatus() {
+      if (!currentUser) return;
+      let allBets = getUserBetsDB();
+      let userMap = allBets[currentUser] || {};
+      let results = JSON.parse(localStorage.getItem('app_results_db') || '{}');
+
+      let totalWinPts = 0;
+      let winDetails = [];
+      let lossDetails = [];
+
+      for (let k in userMap) {
+        let bet = userMap[k];
+        if (bet.status === "pending" && results[bet.game]) {
+          let declaredNum = results[bet.game];
+          if (bet.num === declaredNum) {
+            let winAmt = bet.pts * 90;
+            totalWinPts += winAmt;
+            winDetails.push(`🎉 <b>${bet.game}</b> - [${bet.num}] -> Won +${winAmt} P`);
+            bet.status = "win";
+          } else {
+            lossDetails.push(`💔 <b>${bet.game}</b> - [${bet.num}] -> Loss ${bet.pts} P`);
+            bet.status = "loss";
+          }
+        }
+      }
+
+      if (totalWinPts > 0) {
+        userPoints += totalWinPts;
+        let db = getUsersDB();
+        if (db[currentUser]) { db[currentUser].points = userPoints; saveUsersDB(db); }
+        updateUserPointsUI();
+      }
+
+      saveUserBetsDB(allBets);
+      let statusBox = document.getElementById('user-status-text');
+
+      if (winDetails.length > 0) {
+        statusBox.innerHTML = winDetails.join("<br>") + `<br><br><span style="color:#76ff03;">Winnings added to balance!</span>`;
+      } else if (lossDetails.length > 0) {
+        statusBox.innerHTML = lossDetails.join("<br>") + `<br><br><span style="color:#ffab00;">Better luck next time!</span>`;
+      } else {
+        statusBox.innerHTML = "No new result declared for your bets.";
+      }
+    }
+
+    function adminCreateUser() {
+      let uid = document.getElementById('adm-user-id').value.trim();
+      let pass = document.getElementById('adm-user-pass').value.trim();
+      if (!uid || !pass) return;
+
+      let db = getUsersDB();
+      db[uid] = { pass: pass, points: 0 };
+      saveUsersDB(db);
+      renderAdminUI();
+      showToast("User Created!");
+      document.getElementById('adm-user-id').value = "";
+      document.getElementById('adm-user-pass').value = "";
+    }
+
+    function adminTransferPoints() {
+      let uid = document.getElementById('adm-select-user').value;
+      let pts = parseInt(document.getElementById('adm-transfer-pts').value);
+      if (!uid || !pts) return;
+
+      let transfers = JSON.parse(localStorage.getItem('app_admin_transfers') || '{}');
+      if (!transfers[uid]) transfers[uid] = [];
+      transfers[uid].push({ points: pts, time: new Date().toLocaleTimeString() });
+      localStorage.setItem('app_admin_transfers', JSON.stringify(transfers));
+
+      addAdminTxLog(uid, "Sent Points", pts);
+      renderAdminTxLogs();
+
+      showToast(`${pts} P Sent to ${uid}`);
+      document.getElementById('adm-transfer-pts').value = "";
+    }
+
+    function renderAdminPendingUserReqs() {
+      let reqs = JSON.parse(localStorage.getItem('app_user_to_admin_reqs') || '[]');
+      let container = document.getElementById('admin-pending-user-requests');
+
+      if (reqs.length === 0) {
+        container.innerHTML = "No user requests.";
+      } else {
+        container.innerHTML = "";
+        reqs.forEach((r, idx) => {
+          container.innerHTML += `
+            <div style="background:#2a0b12; border:1px solid #ffab00; padding:6px; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; font-size:10px;">
+              <div><b>${r.user}</b>: ${r.points} P</div>
+              <div style="display:flex; gap:4px;">
+                <button class="btn" style="background:#00c853; color:#fff; padding:2px 5px; font-size:9px;" onclick="approveUserReq(${idx})">ACCEPT</button>
+                <button class="btn" style="background:#d50000; color:#fff; padding:2px 5px; font-size:9px;" onclick="rejectUserReq(${idx})">REJECT</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function approveUserReq(idx) {
+      let reqs = JSON.parse(localStorage.getItem('app_user_to_admin_reqs') || '[]');
+      if (reqs[idx]) {
+        let r = reqs[idx];
+        addAdminTxLog(r.user, "Accepted Request", r.points);
+        reqs.splice(idx, 1);
+        localStorage.setItem('app_user_to_admin_reqs', JSON.stringify(reqs));
+        renderAdminPendingUserReqs();
+        renderAdminTxLogs();
+        showToast(`Approved ${r.points} P from ${r.user}`);
+      }
+    }
+
+    function rejectUserReq(idx) {
+      let reqs = JSON.parse(localStorage.getItem('app_user_to_admin_reqs') || '[]');
+      if (reqs[idx]) {
+        let r = reqs[idx];
+        let usersDB = getUsersDB();
+        if (usersDB[r.user]) { usersDB[r.user].points = (usersDB[r.user].points || 0) + r.points; saveUsersDB(usersDB); }
+
+        addAdminTxLog(r.user, "Rejected Request", r.points);
+        reqs.splice(idx, 1);
+        localStorage.setItem('app_user_to_admin_reqs', JSON.stringify(reqs));
+        renderAdminPendingUserReqs();
+        renderAdminTxLogs();
+        renderAdminUI();
+        showToast(`Rejected & Refunded to ${r.user}`);
+      }
+    }
+
+    function renderAdminTxLogs() {
+      let logs = JSON.parse(localStorage.getItem('app_admin_tx_logs') || '[]');
+      let container = document.getElementById('admin-transactions-history-box');
+
+      if (logs.length === 0) {
+        container.innerHTML = "No transactions.";
+      } else {
+        container.innerHTML = "";
+        logs.forEach(l => {
+          let col = l.type.includes("Sent") ? "#76ff03" : "#ffab00";
+          container.innerHTML += `
+            <div style="border-bottom:1px solid #3e2723; padding:2px 0;">
+              <span style="color:${col}; font-weight:bold;">${l.user}</span>: ${l.pts} P (${l.type})
+            </div>
+          `;
+        });
+      }
+    }
+
+    function selectAdminGameFilter(gName) {
+      selectedAdminGame = gName;
+      document.getElementById('adm-game-select').value = gName;
+      document.getElementById('adm-bets-header-title').innerText = `📊 AGGREGATED LIVE BETS (${gName.toUpperCase()})`;
+
+      document.querySelectorAll('.game-filter-btn').forEach(btn => btn.classList.remove('active'));
+      let btnId = 'btn-g-' + gName.replace(' ', '-');
+      let activeBtn = document.getElementById(btnId);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      renderAggregatedBets();
+    }
+
+    function renderAggregatedBets() {
+      let allUserBets = getUserBetsDB();
+      let totals = {};
+
+      for (let uid in allUserBets) {
+        for (let key in allUserBets[uid]) {
+          let b = allUserBets[uid][key];
+          if (b.game === selectedAdminGame && b.status === "pending") {
+            totals[b.num] = (totals[b.num] || 0) + b.pts;
+          }
+        }
+      }
+
+      let container = document.getElementById('admin-aggregate-bets-box');
+      let keys = Object.keys(totals);
+
+      if (keys.length === 0) {
+        container.innerHTML = `<div style='font-size:11px; color:#aaa; width:100%; text-align:center;'>No live bets on ${selectedAdminGame}</div>`;
+      } else {
+        container.innerHTML = "";
+        keys.forEach(num => {
+          container.innerHTML += `
+            <div class="agg-card">
+              <div style="color:#76ff03; font-weight:bold;">No: ${num}</div>
+              <div style="color:#ffd54f; font-weight:bold; font-size:12px;">${totals[num]} P</div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function adminDeclareResult() {
+      let game = document.getElementById('adm-game-select').value;
+      let val = document.getElementById('adm-selected-result').value;
+      if (!val) return;
+
+      let results = JSON.parse(localStorage.getItem('app_results_db') || '{}');
+      results[game] = val;
+      localStorage.setItem('app_results_db', JSON.stringify(results));
+
+      let usersDB = getUsersDB();
+      let allUserBets = getUserBetsDB();
+      let winKey = `${game}_${val}`;
+
+      for (let uid in allUserBets) {
+        if (allUserBets[uid][winKey] && allUserBets[uid][winKey].status === "pending") {
+          let betPts = allUserBets[uid][winKey].pts || 0;
+          let winAmount = betPts * 90;
+
+          if (usersDB[uid]) {
+            usersDB[uid].points = (usersDB[uid].points || 0) + winAmount;
+          }
+        }
+      }
+
+      saveUsersDB(usersDB);
+      renderAdminUI();
+      renderLiveResults();
+      showToast(`Declared ${game}: ${val}`);
+      document.getElementById('adm-selected-result').value = "";
+    }
+
+    function renderLiveResults() {
+      let results = JSON.parse(localStorage.getItem('app_results_db') || '{}');
+      
+      let grid = document.getElementById('user-live-results');
+      grid.innerHTML = "";
+      ['Faridabad', 'Gaziyabad', 'Gali', 'Dishawar', 'Faridabad Old', 'Dishawar Old'].forEach(g => {
+        grid.innerHTML += `
+          <div class="res-box">
+            <div class="title">${g}</div>
+            <div class="val">${results[g] || '--'}</div>
+          </div>
+        `;
+      });
+
+      document.getElementById('adm-card-fb').innerText = results['Faridabad'] || '--';
+      document.getElementById('adm-card-gb').innerText = results['Gaziyabad'] || '--';
+      document.getElementById('adm-card-gl').innerText = results['Gali'] || '--';
+      document.getElementById('adm-card-ds').innerText = results['Dishawar'] || '--';
+      document.getElementById('adm-card-fbo').innerText = results['Faridabad Old'] || '--';
+      document.getElementById('adm-card-dso').innerText = results['Dishawar Old'] || '--';
+    }
+
+    function renderAdminUI() {
+      let db = getUsersDB();
+      let select = document.getElementById('adm-select-user');
+      let tbody = document.getElementById('admin-users-table');
+
+      select.innerHTML = `<option value="">-- Choose User --</option>`;
+      tbody.innerHTML = "";
+
+      for (let u in db) {
+        select.innerHTML += `<option value="${u}">${u}</option>`;
+        tbody.innerHTML += `
+          <tr>
+            <td>${u}</td>
+            <td>${db[u].pass}</td>
+            <td style="color:#00e676; font-weight:bold;">${db[u].points || 0} P</td>
+          </tr>
+        `;
+      }
+
+      renderAdminPendingUserReqs();
+      renderAdminTxLogs();
+      renderAggregatedBets();
+      renderLiveResults();
+    }
+  </script>
+</body>
+</html>
